@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-# Crear el DataFrame con datos de más países latinoamericanos
+# Crear el DataFrame con datos de ejemplo para diferentes comunidades latinoamericanas
 data = {
     "Barrio": ["Burnaby", "Coquitlam", "Surrey", "Vancouver East", "Richmond"],
     "Poblacion_Chilena": [500, 300, 250, 150, 100],
@@ -12,6 +12,8 @@ data = {
     "Poblacion_Mexicana": [300, 200, 170, 130, 90],
     "Poblacion_Brasilena": [150, 100, 90, 60, 40]
 }
+
+# Crear un DataFrame de Pandas
 df = pd.DataFrame(data)
 
 # GeoJSON simplificado para los barrios de Vancouver
@@ -26,32 +28,40 @@ vancouver_geojson = {
     ]
 }
 
-# Crear el selector en Streamlit para elegir el país a visualizar
-st.title("Distribución de la Población Latinoamericana en Vancouver")
-st.markdown("""
-Este dashboard muestra la distribución de las comunidades latinoamericanas en los principales barrios de Vancouver.
-Selecciona el país para ver la distribución correspondiente.
-""")
+# Crear un contenedor para la interfaz principal
+with st.container():
+    # Título y descripción del dashboard
+    st.title("Distribución de la Población Latinoamericana en Vancouver")
+    st.markdown("""
+    Este dashboard muestra la distribución de las comunidades latinoamericanas en los principales barrios de Vancouver.
+    Usa el selector para visualizar la distribución de las diferentes comunidades.
+    """)
 
-# Crear un selector de país para visualizar
-paises = ["Poblacion_Chilena", "Poblacion_Argentina", "Poblacion_Peruana", "Poblacion_Mexicana", "Poblacion_Brasilena"]
-pais_seleccionado = st.selectbox("Selecciona la comunidad latinoamericana a visualizar:", paises)
+    # Crear un selector de país para visualizar
+    paises = ["Poblacion_Chilena", "Poblacion_Argentina", "Poblacion_Peruana", "Poblacion_Mexicana", "Poblacion_Brasilena"]
+    pais_seleccionado = st.selectbox("Selecciona la comunidad latinoamericana a visualizar:", paises)
 
-# Crear el gráfico de coropletas con el país seleccionado
-fig = px.choropleth_mapbox(
-    df,
-    geojson=vancouver_geojson,
-    locations='Barrio',
-    featureidkey="properties.Barrio",
-    color=pais_seleccionado,
-    color_continuous_scale="Oranges",
-    mapbox_style="carto-positron",
-    zoom=9,
-    center={"lat": 49.2827, "lon": -123.1207},
-    opacity=0.6,
-    labels={pais_seleccionado: 'Población'},
-    title=f"Distribución de la {pais_seleccionado.split('_')[1]} en Vancouver"
-)
+    # Crear el gráfico de coropletas con el país seleccionado y ajustado para ocupar más espacio
+    fig = px.choropleth_mapbox(
+        df,
+        geojson=vancouver_geojson,
+        locations='Barrio',
+        featureidkey="properties.Barrio",
+        color=pais_seleccionado,
+        color_continuous_scale="Oranges",
+        mapbox_style="carto-positron",
+        zoom=9,
+        center={"lat": 49.2827, "lon": -123.1207},
+        opacity=0.6,
+        labels={pais_seleccionado: 'Población'},
+        title=f"Distribución de la {pais_seleccionado.split('_')[1]} en Vancouver"
+    )
 
-# Mostrar el gráfico en el dashboard
-st.plotly_chart(fig)
+    # Ajustar el tamaño del gráfico para que sea más grande y adaptable
+    fig.update_layout(
+        height=600,  # Ajusta la altura del gráfico
+        margin={"r": 0, "t": 50, "l": 0, "b": 0}  # Elimina los márgenes para mejor visualización
+    )
+
+    # Mostrar el gráfico en el dashboard
+    st.plotly_chart(fig, use_container_width=True)  # Ajusta el tamaño para adaptarse al contenedor
