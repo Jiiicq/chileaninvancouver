@@ -3,7 +3,10 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-# Crear el DataFrame con datos de ejemplo para diferentes comunidades latinoamericanas
+# Configurar la página para mejorar la visualización en móviles y laptops
+st.set_page_config(layout="wide")
+
+# Crear el DataFrame con datos de más países latinoamericanos
 data = {
     "Barrio": ["Burnaby", "Coquitlam", "Surrey", "Vancouver East", "Richmond"],
     "Poblacion_Chilena": [500, 300, 250, 150, 100],
@@ -50,17 +53,23 @@ with st.container():
         color=pais_seleccionado,
         color_continuous_scale="Oranges",
         mapbox_style="carto-positron",
-        zoom=9,
+        zoom=10,
         center={"lat": 49.2827, "lon": -123.1207},
-        opacity=0.6,
+        opacity=0.7,
         labels={pais_seleccionado: 'Población'},
         title=f"Distribución de la {pais_seleccionado.split('_')[1]} en Vancouver"
     )
 
     # Ajustar el tamaño del gráfico para que sea más grande y adaptable
     fig.update_layout(
-        height=600,  # Ajusta la altura del gráfico
-        margin={"r": 0, "t": 50, "l": 0, "b": 0}  # Elimina los márgenes para mejor visualización
+        height=800,  # Ajusta la altura del gráfico para móviles y laptops
+        margin={"r": 0, "t": 50, "l": 0, "b": 0},  # Elimina los márgenes para mejor visualización
+        coloraxis_colorbar=dict(
+            thickness=15,  # Ajusta el grosor de la barra de colores
+            title="Población",
+            lenmode="fraction",
+            len=0.5  # Ajusta la longitud de la barra de colores
+        )
     )
 
     # Mostrar el gráfico en el dashboard
